@@ -1,8 +1,9 @@
 import React from "react";
 import { useAddress, useDisconnect, useMetamask } from "@thirdweb-dev/react";
 import { GetServerSideProps } from "next";
-import { sanityClient } from "../../../sanity";
+import { sanityClient, urlFor } from "../../../sanity";
 import { Collection } from "../../../typings";
+import Link from "next/link";
 interface Props {
   collection: Collection;
 }
@@ -20,15 +21,15 @@ const NFTDropPage = ({ collection }: Props) => {
           <div className=" bg-gradient-to-br from-yellow-400 to-purple-600 p-2 rounded-xl">
             <img
               className="w-44 rounded-xl object-cover lg:h-96 lg:w-72"
-              src="https://links.papareact.com/8sg"
+              src={urlFor(collection.mainImage).url()}
               alt=""
             />
           </div>
           <div className="text-center space-y-2 pt-3 px-2">
-            <h1 className="text-3xl font-bold text-white">Dev Retro</h1>
-            <h2 className="text-xl text-white">
-              A collection of Developers that will take over the world
-            </h2>
+            <h1 className="text-3xl font-bold text-white">
+              {collection.nftCollectionName}
+            </h1>
+            <h2 className="text-xl text-white">{collection.description}</h2>
           </div>
         </div>
       </div>
@@ -36,14 +37,16 @@ const NFTDropPage = ({ collection }: Props) => {
       <div className="flex flex-1 flex-col lg:col-span-6 p-6 lg:p-12">
         {/* Header */}
         <header className="flex items-center justify-between">
-          <h1 className="text-xl font-extralight w-52 sm:w-80 cursor-pointer">
-            {" "}
-            The{" "}
-            <span className="font-extrabold underline decoration-pink-500/50">
-              Devs
-            </span>{" "}
-            NFT Market Place
-          </h1>
+          <Link href={"/"}>
+            <h1 className="text-xl font-extralight w-52 sm:w-80 cursor-pointer">
+              {" "}
+              The{" "}
+              <span className="font-extrabold underline decoration-pink-500/50">
+                Devs
+              </span>{" "}
+              NFT Market Place
+            </h1>
+          </Link>
 
           <button
             onClick={() => (address ? disconnect() : MetaConnect())}
@@ -63,7 +66,7 @@ const NFTDropPage = ({ collection }: Props) => {
         <div className="mt-10 lg:mt-0 flex flex-1 flex-col items-center text-center justify-center space-y-6 ">
           <img
             className="w-80 pb-10 lg:h-40 object-cover"
-            src="https://links.papareact.com/bdy"
+            src={urlFor(collection.previewImage).url()}
             alt=""
           />
           <h1 className="font-bold text-3xl lg:font-extrabold lg:text-5xl">
