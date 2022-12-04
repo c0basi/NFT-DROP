@@ -1,7 +1,13 @@
 import React from "react";
 import { useAddress, useDisconnect, useMetamask } from "@thirdweb-dev/react";
+import { GetServerSideProps } from "next";
+import { sanityClient } from "../../../sanity";
+import { Collection } from "../../../typings";
+interface Props {
+  collection: Collection;
+}
 
-const NFTDropPage = () => {
+const NFTDropPage = ({ collection }: Props) => {
   // Auth
   const MetaConnect = useMetamask();
   const address = useAddress();
@@ -61,7 +67,7 @@ const NFTDropPage = () => {
             alt=""
           />
           <h1 className="font-bold text-3xl lg:font-extrabold lg:text-5xl">
-            The Dev Retro Coding Club | NFT Drop
+            {collection.title}
           </h1>
           <p className="pt-2 text-xl text-green-500 mb-10">
             13/21 NFTs claimed
@@ -76,3 +82,38 @@ const NFTDropPage = () => {
 };
 
 export default NFTDropPage;
+
+export const getServerSideProps: GetServerSideProps = async ({ params }) => {
+  const query = `*[_type == 'collection' && slug.current == $id][0]{
+    _id, title,address,description,nftCollectionName,
+      mainImage{
+    asset,
+    },
+    previewImage{
+    asset,},
+    slug{
+    current, },
+      author -> {
+      name
+    },creator ->{
+      _id,name, address,
+      slug{
+    current,},
+    }
+    }`;
+
+  const collection = await sanityClient.fetch(query, {
+    id: params?.id,
+  });
+  if (!collection) {
+    return {
+      notFound: true,
+    };
+  }
+
+  return {
+    props: {
+      collection,
+    },
+  };
+};
